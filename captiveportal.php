@@ -3,6 +3,10 @@ $logonerror=false;
 $urlRedirect=null;
 $urlRefresh=null;
 $urlLogoff=null;
+/**
+ * Set true if logon should be executed using a Http get request, false if logon should be executed using a Http post request
+ */
+$useGet=true;
 if (isset($_REQUEST["submit"])) {
     ob_clean();
     /**
@@ -220,21 +224,55 @@ function executeRadiusLogin($username,$password){
             </div>
         </div>
         <?php
-        if(isset($urlRedirect)){ ?>
-            <script type="text/javascript">
-                //openpopup
-                var newWin=openCaptivePopup();
-                if(!newWin || newWin.closed || typeof newWin.closed=='undefined'){
-                    document.getElementById('popupblocked').style.display='block';
-                    alert("Please allow this page to open popup else you cannot logoff from the session");
+        if(isset($urlRedirect)){ 
+            if($useGet){?>
+                <script type="text/javascript">
+                    //openpopup
+                    var newWin=openCaptivePopup();
+                    if(!newWin || newWin.closed || typeof newWin.closed=='undefined'){
+                        document.getElementById('popupblocked').style.display='block';
+                        alert("Please allow this page to open popup else you cannot logoff from the session");
+                    }
+                    else{
+                        document.getElementById('popupok').style.display='block';
+                        setTimeout("window.location.href='<?php echo $urlRedirect; ?>'",10000);
+                    }
+                </script>
+            <?php
+            }else{
+                if (isset($_REQUEST["submit"])) {
+                    if(!$logonerror){?>
+                    <script type="text/javascript">
+                        function postlogonform(){
+                            document.getElementById('postform').submit();
+                        }
+                        //openpopup
+                        var newWin=openCaptivePopup();
+                        if(!newWin || newWin.closed || typeof newWin.closed=='undefined'){
+                            document.getElementById('popupblocked').style.display='block';
+                            alert("Please allow this page to open popup else you cannot logoff from the session");
+                        }
+                        else{
+                            document.getElementById('popupok').style.display='block';
+                            setTimeout("postlogonform()",10000);
+                        }
+                        
+                    </script>
+                    <form id="postform" method="POST" action="<?php echo "http://" . (isset($_REQUEST["ap_ip"])?$_REQUEST["ap_ip"]:""). ":" . (isset($_REQUEST["ap_port"])?$_REQUEST["ap_port"]:"") . "/logon"; ?>">
+                        <?php
+                        foreach ($_REQUEST as $key => $value) {
+                            if ($key != "ap_ip" && $key != "ap_port" && $key != "submit") {
+                              echo "<input type=\"hidden\" name=\"$key\" value=\"$value\" />";
+                            }
+                        }
+                        ?>
+                    </form>
+                <?php 
+                    }
                 }
-                else{
-                    document.getElementById('popupok').style.display='block';
-                    setTimeout("window.location.href='<?php echo $urlRedirect; ?>'",5000);
-                }
-            </script>                                
-        <?php
+            }
         }?>
+        
     </body>
 </html>
 
