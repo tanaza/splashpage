@@ -44,6 +44,9 @@ function executeRadiusLogin($username,$password){
     //in this example we suppose login is always ok
     return true;
 }
+if(isset($_REQUEST["error"]) && $_REQUEST["error"]!=""){
+    $logonerror=true;
+}
 ?>
 <?php ob_start(); ?>
 <!DOCTYPE html>
