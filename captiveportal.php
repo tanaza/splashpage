@@ -192,7 +192,7 @@ if(isset($_REQUEST["error"]) && $_REQUEST["error"]!=""){
                                                     </tr>
                                                     <tr>
                                                         <td align="left">Password</td>
-                                                        <td><input  type="text" maxlength="40" valign="center" id="lastName" name="passwd" value="" class="idleField" /></td>
+                                                        <td><input  type="password" maxlength="40" valign="center" id="lastName" name="passwd" value="" class="idleField" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2" style="">
